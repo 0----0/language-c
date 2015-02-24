@@ -21,6 +21,9 @@
     'include': '#special_block'
   }
   {
+    'include': '#constructor'
+  }
+  {
     'include': 'source.c'
   }
   {
@@ -132,11 +135,11 @@
       {
         'captures':
           '1':
-            'name': 'support.function.any-method.c'
+            'name': 'support.function.any-method.cpp'
           '2':
-            'name': 'punctuation.definition.parameters.c'
+            'name': 'punctuation.definition.parameters.cpp'
         'match': '(?x)\n    \t\t\t\t(\n    \t\t\t\t\t(?!while|for|do|if|else|switch|catch|enumerate|return|r?iterate)(?: \\b[A-Za-z_][A-Za-z0-9_]*+\\b | :: )*+                  # actual name\n    \t\t\t\t)\n    \t\t\t\t \\s*(\\()'
-        'name': 'meta.function-call.c'
+        'name': 'meta.function-call.cpp'
       }
       {
         'include': '$base'
@@ -145,11 +148,18 @@
   'constructor':
     'patterns': [
       {
-        'begin': '(?x)\n    \t\t\t\t(?:  ^\\s*)                             # begin-of-line\n    \t\t\t\t((?!while|for|do|if|else|switch|catch|enumerate|r?iterate)[A-Za-z_][A-Za-z0-9_:]*) # actual name\n    \t\t\t\t \\s*(\\()                            # start bracket or end-of-line\n    \t\t\t'
+        'begin': '(?x)
+                  (?:  ^)                             # begin-of-line\n
+                  (\\s*) (?!while|for|do|if|else|switch|catch|enumerate|r?iterate)
+                  ([A-z_][A-z0-9_:]*+)                # actual name\n
+                  \\s*(\\()                           # start bracket or end-of-line\n
+                  '
         'beginCaptures':
           '1':
-            'name': 'entity.name.function.cpp'
+            'name': 'punctuation.whitespace.function.leading.c'
           '2':
+            'name': 'entity.name.function.cpp'
+          '3':
             'name': 'punctuation.definition.parameters.begin.c'
         'end': '\\)'
         'endCaptures':
@@ -163,15 +173,32 @@
         ]
       }
       {
-        'begin': '(?x)\n    \t\t\t\t(:)                            # begin-of-line\n    \t\t\t\t((?=\\s*[A-Za-z_][A-Za-z0-9_:]* # actual name\n    \t\t\t\t \\s*(\\()))                      # start bracket or end-of-line\n    \t\t\t'
+        'begin': '(:)'
         'beginCaptures':
           '1':
-            'name': 'punctuation.definition.parameters.c'
-        'end': '(?=\\{)'
+            'name': 'punctuation.definition.parameters.cpp'
+        'end': '(?={)'
         'name': 'meta.function.constructor.initializer-list.cpp'
         'patterns': [
           {
-            'include': '$base'
+            'begin': '(?x)
+                      \\b
+                      ([A-Za-z_][A-Za-z0-9_]*+)     #member name\n
+                      \\s*(\\()'
+            'beginCaptures':
+              '1': 'name': 'variable.other.member.cpp'
+              '2': 'name': 'punctuation.definition.parameters.begin.cpp'
+            'end': '\\)'
+            'endCaptures':
+              '0': 'name': 'punctuation.definition.parameters.end.cpp'
+            'patterns': [
+              {
+                'include': '$base'
+              }
+              {
+                'include': 'source.c#block_innards'
+              }
+            ]
           }
         ]
       }
